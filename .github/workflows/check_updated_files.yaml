@@ -1,0 +1,25 @@
+name: Check Updated Files
+on:
+  pull_request:
+    paths:
+      - '**/*'
+
+jobs:
+  check-updated-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get list of updated files
+        id: updated-files
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+          UPDATED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "::set-output name=files::$UPDATED_FILES"
+
+      - name: Show updated files
+        run: |
+          echo "Updated files: ${{ steps.updated-files.outputs.files }}"
+
+          
